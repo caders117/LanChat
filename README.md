@@ -5,6 +5,7 @@ In simpleChat:
  - Server IP and port number have to be specified/known before connection.
  - Contains listener for receiving message.
  - Test classes take console I/O and send it between client/server.
+
 In broadcastChat:
  - Server starts on a default port of 8080.  If that port is not available, it keeps incrementing
    the port until it finds an available one. 
@@ -15,6 +16,7 @@ In broadcastChat:
  - The client receives the server's UDP packet and sends a request for a TCP connection.
  - Contains a listener for receiving messages (simpleChat) and a listener for discovering
    the server with UDP broadcasting.
+
 Yay multithreading!
 Yay networking!
 Hope to make a nice looking chat GUI with an option to start a server or join other people's servers.
