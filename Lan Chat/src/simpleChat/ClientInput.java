@@ -33,6 +33,9 @@ public class ClientInput extends InputHandleThread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("This client closed.");
+		if(((Client) chatObj).isClosed())
+			System.out.println("Client socket closed");
+		else
+			System.out.println("Server closed causing this client to close.");
 	}
 }

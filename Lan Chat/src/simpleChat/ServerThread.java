@@ -25,12 +25,13 @@ public class ServerThread extends Thread {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		while(true) {
+		while(!server.getServerSocket().isClosed()) {
 			try {
 				listenForConnection();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("ServerSocket closed");
+				break;
 			}
 		}
 	}

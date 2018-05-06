@@ -11,9 +11,26 @@ public class Server extends ChatObject {
 
 	ServerSocket serverSoc;
 	List<Socket> connections;
+	protected static int port = 8080;
 
 	public Server(int port) throws IOException {
 		serverSoc = new ServerSocket(port);
+		connections = new ArrayList<Socket>();
+		System.out.println("ServerSocket started at port " + port);
+	}
+	
+	public Server() {
+		while(true) {
+			try {
+				serverSoc = new ServerSocket(port);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				System.out.println(port + " not available for use.");
+				port++;
+				continue;
+			}
+			break;
+		}
 		connections = new ArrayList<Socket>();
 		System.out.println("ServerSocket started at port " + port);
 	}
@@ -33,7 +50,7 @@ public class Server extends ChatObject {
 	 * 
 	 * @param msg - String to be sent
 	 */
-	public void broadcast(String msg) {
+	public void sendToAllClients(String msg) {
 		DataOutputStream output;
 		for(Socket s : connections) {
 			try {

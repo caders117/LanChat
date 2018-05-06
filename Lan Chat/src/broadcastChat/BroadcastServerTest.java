@@ -1,28 +1,31 @@
-package simpleChat;
+package broadcastChat;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.Scanner;
 
-public class TestServer implements InputListener {
-	
-	static Server server = null;
+import simpleChat.InputListener;
 
+public class BroadcastServerTest implements InputListener {
+	
+	static BroadcastServer server = null;
+	static int ID = 0;
+	
 	public static void main(String[] args) {
 		Scanner scan = new Scanner(System.in);
-		
 		try {
-			server = new Server(8080);
-		} catch (IOException e) {
+			server = new BroadcastServer();
+			server.setName("Server!");
+		} catch (SocketException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
 		}
-		server.addInputListener(new TestServer());
-		server.start();
+		server.addInputListener(new BroadcastServerTest());
 		
 		String msg = "";
-		while(msg != ".close" && !server.getServerSocket().isClosed()) {
+		while(!msg.equals(".close")) { 
 			msg = scan.nextLine();
-			server.sendToAllClients(msg);
+			server.sendToAllClients(server.getName() + ">" + msg);
 		}
 		try {
 			server.close();
@@ -30,6 +33,7 @@ public class TestServer implements InputListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		//System.exit(0);
 	}
 
 	@Override

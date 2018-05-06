@@ -10,7 +10,8 @@ public class TestClient implements InputListener {
 		Scanner scan = new Scanner(System.in);
 		Client client = null;
 		try {
-			client = new Client("localhost", 8080);
+			client = new Client("192.168.2.131", 8080);
+			client.startListening();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -30,6 +31,7 @@ public class TestClient implements InputListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		scan.close();
 	}
 
 	@Override

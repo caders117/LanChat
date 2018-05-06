@@ -1,6 +1,7 @@
 package simpleChat;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 

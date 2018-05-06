@@ -12,13 +12,32 @@ import java.net.UnknownHostException;
  */
 public class Client extends ChatObject {
 	
+	private String addr = "localhost";
+	private int port = 8080;
 	private Socket socket;
 	private boolean closed;
 	
 	public Client(String address, int port) throws UnknownHostException, IOException {
-		socket = new Socket(address, port);
+		addr = address;
+		this.port = port;
+	}
+	
+	public Client() {
+		
+	}
+	
+	public void setAddress(String a) {
+		addr = a;
+	}
+	
+	public void setPort(int p) {
+		port = p;
+	}
+	
+	public void startListening() throws IOException {
+		socket = new Socket(addr, port);
 		closed = false;
-		System.out.println("Connection made at: " + address + ", port " + port);
+		System.out.println("Connection made at: " + addr + ", port " + port);
 		// Separate thread for reading input
 		ClientInput inputThread = new ClientInput(socket, this);
 		inputThread.start();
@@ -51,5 +70,6 @@ public class Client extends ChatObject {
 	public void close() throws IOException {
 		socket.close();
 		closed = true;
+		System.out.println("Client closed");
 	}
 }

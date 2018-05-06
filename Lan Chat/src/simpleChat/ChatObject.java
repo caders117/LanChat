@@ -4,11 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Contains methods shard between Client and Server
+ * Contains methods shared between Client and Server
  * @author Cade
  *
  */
 public abstract class ChatObject {
+	
+	private String name;
+	
+	public void setName(String s) {
+		name = s;
+	}
+	
+	public String getName() {
+		return name;
+	}
 
 	private List<InputListener> inputListeners = new ArrayList<InputListener>();
 
