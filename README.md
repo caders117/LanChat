@@ -1,5 +1,6 @@
 # LanChat
 Server and Client java classes.
+
 In simpleChat:
  - Server starts and listens for a client wanting to establish TCP connection.
  - Server IP and port number have to be specified/known before connection.
