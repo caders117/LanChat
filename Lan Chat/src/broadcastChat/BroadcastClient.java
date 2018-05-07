@@ -21,30 +21,44 @@ public class BroadcastClient extends Client {
 	private List<ServerListener> serversAvailable = new ArrayList<ServerListener>();
 
 	public BroadcastClient() throws SocketException, UnknownHostException {
-		dataSoc = new DatagramSocket();
-		addr = InetAddress.getByName("255.255.255.255");
-		listen = new BroadcastClientListen(this, dataSoc);
-		listen.start();
+		
 	}
 	
 	public BroadcastClient(int port) throws SocketException, UnknownHostException {
 		this.port = port;
+	}
+	
+	{
+		String name = InetAddress.getLocalHost().getHostName();
+		setName(name);
+		
 		dataSoc = new DatagramSocket();
+		
+		// Why does this work up here but not in the broadcast()
+		// method????
+		dataSoc.setBroadcast(true);
 		addr = InetAddress.getByName("255.255.255.255");
 		listen = new BroadcastClientListen(this, dataSoc);
 		listen.start();
 	}
 	
 	public void broadcast(String message) throws IOException {
-		dataSoc.setBroadcast(true);
+		port = 8080;
+		
+	//	dataSoc.setBroadcast(true);
 		
 		byte[] buffer = message.getBytes();
 		int end = port + 100;
 		while(port < end) {
+			//System.out.println("Scanning port " + port);
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, addr, port);
 			dataSoc.send(packet);
 			port++;
 		}
+	}
+	
+	public void broadcastDiscovery() throws IOException {
+		broadcast("This is client.");
 	}
 	
 	@Override
@@ -75,5 +89,10 @@ public class BroadcastClient extends Client {
 		// Notify everybody that may be interested.
 		for (ServerListener sl : serversAvailable)
 			sl.serverFound(addr, port);
+	}
+	
+	public void receiveUDPMessage(String s) {
+		for(ServerListener sl : serversAvailable)
+			sl.udpMessageReceived(s);
 	}
 }

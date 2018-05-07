@@ -17,6 +17,7 @@ public class Server extends ChatObject {
 		serverSoc = new ServerSocket(port);
 		connections = new ArrayList<Socket>();
 		System.out.println("ServerSocket started at port " + port);
+		setName("Server");
 	}
 	
 	public Server() {
@@ -33,6 +34,7 @@ public class Server extends ChatObject {
 		}
 		connections = new ArrayList<Socket>();
 		System.out.println("ServerSocket started at port " + port);
+		setName("um");
 	}
 	
 	/**

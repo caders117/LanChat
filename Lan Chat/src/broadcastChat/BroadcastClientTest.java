@@ -1,6 +1,7 @@
 package broadcastChat;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
@@ -11,14 +12,15 @@ public class BroadcastClientTest implements InputListener, ServerListener {
 	static BroadcastClient client = null;
 	static int ID = 0;
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws UnknownHostException {
 		Scanner scan = new Scanner(System.in);
 		try {
+			String name = InetAddress.getLocalHost().getHostName();
 			client = new BroadcastClient();
-			client.setName("client" + ID++);
+			client.setName(name);
 			client.addInputListener(new BroadcastClientTest());
 			client.addServerListener(new BroadcastClientTest());
-			client.broadcast("This is client.");
+			client.broadcastDiscovery();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -27,7 +29,7 @@ public class BroadcastClientTest implements InputListener, ServerListener {
 		String msg = "";
 		while(!msg.equals(".close")) {
 			msg = scan.nextLine();
-			client.send(client.getName() + ">" + msg);
+			client.send(client.getName() + "> " + msg);
 		}
 		try {
 			client.close();
@@ -56,6 +58,12 @@ public class BroadcastClientTest implements InputListener, ServerListener {
 	public void messageReceived(String msg) {
 		// TODO Auto-generated method stub
 		System.out.println(msg);
+	}
+
+	@Override
+	public void udpMessageReceived(String msg) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

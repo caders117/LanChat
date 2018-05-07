@@ -11,9 +11,15 @@ public class BroadcastServerListen extends Thread {
 	private DatagramSocket dataSocket;
 	private byte[] buffer = new byte[256];
 	private boolean running = true;
+	private String name = "Default";
 
-	public BroadcastServerListen(int port) throws SocketException {
+	public BroadcastServerListen(String n, int port) throws SocketException {
 		dataSocket = new DatagramSocket(port);
+		name = n;
+	}
+	
+	public void setServerName(String s) {
+		name = s;
 	}
 
 	public void stopListening() {
@@ -33,7 +39,7 @@ public class BroadcastServerListen extends Thread {
 			String received = new String(packet.getData(), 0, packet.getLength());
 			System.out.println(received);
 			if(received.contains("This is client")) {
-				buffer = "I received it!".getBytes();
+				buffer = ("I received it!" + name).getBytes();
 				InetAddress addr = packet.getAddress();
 				int port = packet.getPort();
 				packet = new DatagramPacket(buffer, buffer.length, addr, port);

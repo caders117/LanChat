@@ -15,7 +15,7 @@ public class BroadcastServerTest implements InputListener {
 		Scanner scan = new Scanner(System.in);
 		try {
 			server = new BroadcastServer();
-			server.setName("Server!");
+			server.setName("Server");
 		} catch (SocketException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -25,7 +25,7 @@ public class BroadcastServerTest implements InputListener {
 		String msg = "";
 		while(!msg.equals(".close")) { 
 			msg = scan.nextLine();
-			server.sendToAllClients(server.getName() + ">" + msg);
+			server.sendToAllClients(server.getName() + "> " + msg);
 		}
 		try {
 			server.close();

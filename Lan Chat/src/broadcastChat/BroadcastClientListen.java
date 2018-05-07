@@ -34,8 +34,9 @@ public class BroadcastClientListen extends Thread {
 			}
 			String received = new String(packet.getData(), 0, packet.getLength());
 			System.out.println(received);
-			if(received.equals("I received it!")) {
+			if(received.contains("I received it!")) {
 				client.foundServer(packet.getAddress().getHostAddress(), packet.getPort());
+				client.receiveUDPMessage(received.substring(14));
 			}
 		}
 		System.out.println("Stopped listening for server udp reply");

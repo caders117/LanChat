@@ -2,6 +2,7 @@ package simpleChat;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -32,6 +33,17 @@ public class Client extends ChatObject {
 	
 	public void setPort(int p) {
 		port = p;
+	}
+	
+	{
+		String name = "Default Client Name";
+		try {
+			name = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		setName(name);
 	}
 	
 	public void startListening() throws IOException {

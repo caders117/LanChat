@@ -11,13 +11,28 @@ public class BroadcastServer extends Server {
 	
 	public BroadcastServer(int port) throws IOException {
 		super(port);
-		listen = new BroadcastServerListen(port);
-		listen.start();
-		start();
+		init();
+	}
+	
+	public BroadcastServer(String n) throws SocketException {
+		setName(n);
+		init();
+	}
+	
+	public BroadcastServer(int port, String n) throws SocketException {
+		this.port = port;
+		setName(n);
+		init();
 	}
 	
 	public BroadcastServer() throws SocketException {
-		listen = new BroadcastServerListen(port);
+		setName("Server");
+		init();
+	}
+	
+	private void init() throws SocketException {
+		listen = new BroadcastServerListen(this.getName(), port);
+		listen.setServerName(getName());
 		listen.start();
 		start();
 	}
