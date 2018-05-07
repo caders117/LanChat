@@ -107,8 +107,12 @@ public class ClientGUI extends JPanel {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	//	client.send("");
 	}
+	
+	public Client getClient() {
+		return client;
+	}
+	
 	private class Listeners implements ActionListener, InputListener {
 		
 		@Override

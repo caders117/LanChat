@@ -3,6 +3,8 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -162,6 +164,18 @@ public class MenuScreen extends JPanel {
 				frame.setSize(500, 500);
 				ClientGUI cligui = new ClientGUI(availableServers.getElementAt(serverList.getSelectedIndex()).toString(), ip, port);
 				frame.getContentPane().add(cligui, BorderLayout.CENTER);
+				frame.addWindowListener(new WindowAdapter() {
+					
+					@Override
+					public void windowClosing(WindowEvent e) {
+						try {
+							cligui.getClient().close();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				});
 				frame.setVisible(true);
 			}
 		}
