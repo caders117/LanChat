@@ -14,6 +14,7 @@ public abstract class ChatObject {
 	
 	public void setName(String s) {
 		name = s;
+		System.out.println("Name: "+name);
 	}
 	
 	public String getName() {

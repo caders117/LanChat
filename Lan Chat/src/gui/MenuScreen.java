@@ -3,6 +3,8 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -28,6 +30,7 @@ public class MenuScreen extends JPanel {
 	
 	static final int PADDING = 40;
 
+	private String username = "Username";
 	private ArrayList<String> addresses = new ArrayList<String>();
     private DefaultListModel availableServers = new DefaultListModel();;
 	private JList serverList = new JList(availableServers);
@@ -42,15 +45,26 @@ public class MenuScreen extends JPanel {
 		JFrame frame = new JFrame("Menu");
 		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		MenuScreen menu = new MenuScreen();
+		MenuScreen menu = new MenuScreen("Cade Test");
 		frame.getContentPane().add(menu, BorderLayout.CENTER);
-		frame.setVisible(true);		
+		frame.setVisible(true);
 	}
 	
-	public MenuScreen() {
+	public MenuScreen(String usr) {
+		
+		username = usr;
 		
 		serverList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		serverList.setVisibleRowCount(-1);
+		
+		serverList.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+			      selected = serverList.getSelectedIndex();
+			      System.out.println(selected);
+			}
+		});
 		
 		create.addActionListener(new CreateServer());
 		join.addActionListener(new JoinServer());
@@ -111,8 +125,8 @@ public class MenuScreen extends JPanel {
 
 		try {
 			client = new BroadcastClient();
-			client.addServerListener(new Listener());
-			client.broadcastDiscovery();
+			client.setName(usr);
+//			client.broadcastDiscovery();
 			ContinuousListen listen = new ContinuousListen(client);
 			listen.start();
 		} catch (SocketException e) {
@@ -124,29 +138,61 @@ public class MenuScreen extends JPanel {
 		}
 	}
 	
+	private int selected = serverList.getSelectedIndex();
+		
 	private class ContinuousListen extends Thread {
 		
 		BroadcastClient client;
+		ArrayList<String> servers = new ArrayList<String>();
+		ArrayList<String> addrs = new ArrayList<String>();
 		
 		public ContinuousListen(BroadcastClient cli) {
 			client = cli;
+			client.addServerListener(new ContinuousListenForServers());
 		}
 		
 		@Override
 		public void run() {
 			while(true) {
 			try {
+				servers.clear();
 				client.broadcastDiscovery();
+				Thread.sleep(100);
+				addresses = addrs;
+				availableServers.clear();
+				for(String s : servers)
+					availableServers.addElement(s);
+				if(selected >= availableServers.getSize())
+					selected = availableServers.getSize() - 1;
+				System.out.println(selected);
+
+				serverList.setSelectedIndex(selected);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-			try {
-				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+		}
+		
+		private class ContinuousListenForServers implements ServerListener {
+			
+			@Override
+			public void serverFound(String addr, int port) {
+				addrs.add(addr + ":" + port);
+			}
+
+			@Override
+			public void udpMessageReceived(String msg) {
+				servers.add(msg);
 			}
 		}
 	}
@@ -162,7 +208,7 @@ public class MenuScreen extends JPanel {
 				int port = Integer.parseInt(addy.split(":")[1]);
 				JFrame frame = new JFrame("Client");
 				frame.setSize(500, 500);
-				ClientGUI cligui = new ClientGUI(availableServers.getElementAt(serverList.getSelectedIndex()).toString(), ip, port);
+				ClientGUI cligui = new ClientGUI(availableServers.getElementAt(serverList.getSelectedIndex()).toString(), ip, port, username);
 				frame.getContentPane().add(cligui, BorderLayout.CENTER);
 				frame.addWindowListener(new WindowAdapter() {
 					
@@ -196,35 +242,38 @@ public class MenuScreen extends JPanel {
 					System.out.println(name.trim());
 				}
 				
+				GUIServer newServer;
 				try {
-					GUIServer newServer = new GUIServer(name);
+					newServer = new GUIServer(name, client.getName());
 					client.broadcastDiscovery();
-					int lastIndex = serverList.getModel().getSize() - 1;
-					if (lastIndex >= 0) {
-					   serverList.ensureIndexIsVisible(lastIndex);
-					}
-					serverList.setSelectedIndex(lastIndex);
-					join.doClick();
+					
+					JFrame frame = new JFrame("Client");
+					frame.setSize(500, 500);
+					frame.getContentPane().add(newServer.getClientGUI(), BorderLayout.CENTER);
+					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					frame.addWindowListener(new WindowAdapter() {
+						
+						@Override
+						public void windowClosing(WindowEvent e) {
+							int doClose = JOptionPane.showConfirmDialog(null, "Are you sure you want to disband this server?");
+							if(doClose == JOptionPane.YES_OPTION) {
+								try {
+									newServer.close();
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+								frame.dispose();
+							}
+						}
+					});
+					frame.setVisible(true);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+					
 			}
-		}
-	}
-	
-	private class Listener implements ServerListener {
-
-		@Override
-		public void serverFound(String addr, int port) {
-			addresses.add(addr + ":" + port);
-		}
-
-		@Override
-		public void udpMessageReceived(String msg) {
-			if(!availableServers.contains(msg))
-				availableServers.addElement(msg);
-			System.out.println("Message:" + msg);
 		}
 	}
 }

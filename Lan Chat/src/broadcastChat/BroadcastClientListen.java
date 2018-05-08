@@ -33,7 +33,7 @@ public class BroadcastClientListen extends Thread {
 					break;
 			}
 			String received = new String(packet.getData(), 0, packet.getLength());
-			System.out.println(received);
+		//	System.out.println(received);
 			if(received.contains("I received it!")) {
 				client.foundServer(packet.getAddress().getHostAddress(), packet.getPort());
 				client.receiveUDPMessage(received.substring(14));

@@ -32,7 +32,7 @@ public class ClientGUI extends JPanel {
 	private JTextField status = new JTextField("Not connected.");
 	private Client client;
 	
-	public ClientGUI(String serverName, String ip, int port) {
+	public ClientGUI(String serverName, String ip, int port, String usr) {
 		sendBtn.addActionListener(new Listeners());
 		status.setEditable(false);
 		chatLog.setEditable(false);
@@ -95,6 +95,8 @@ public class ClientGUI extends JPanel {
 
 		try {
 			client = new Client(ip, port);
+			client.setName(usr);
+			System.out.println(client.getName());
 			status.setText("Connected to " + serverName + " -- " + ip + ":" + port);
 			status.setBackground(Color.WHITE);
 			client.startListening();
