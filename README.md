@@ -27,6 +27,6 @@ In jars folder:
  - Names go together.
  - Client + Server pairs Servers have to be started first.
  - Client + Server pairs Server talks to multiple clients, looks clean on Server screen, icky on Client screen.
- - User_interface_finished.jar is the full application.
+ - User_interface_finished.jar is the full application.  It doesn't work :(
  
 Networking and Multithreading were both new.
